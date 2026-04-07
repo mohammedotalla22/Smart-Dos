@@ -1,4 +1,6 @@
 #include "firebase.h"
+#include <QBuffer>
+#include <QDateTime>
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QUrl>
@@ -40,7 +42,8 @@ QString Firebase::firestoreUrl(const QString &path) const
 
 QNetworkRequest Firebase::createRequest(const QString &url) const
 {
-    QNetworkRequest request(QUrl(url));
+    QUrl reqUrl(url);
+    QNetworkRequest request(reqUrl);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     return request;
 }
@@ -109,7 +112,11 @@ void Firebase::activateApp(const QString &hardwareId, const QString &licenseKey)
             QNetworkRequest devReq = createRequest(devUrl);
 
             QByteArray data = QJsonDocument(doc).toJson();
-            m_networkManager->sendCustomRequest(devReq, "PATCH", new QBuffer(new QByteArray(data)));
+            QBuffer *buf = new QBuffer();
+            buf->setData(data);
+            buf->open(QIODevice::ReadOnly);
+            QNetworkReply *devReply = m_networkManager->sendCustomRequest(devReq, "PATCH", buf);
+            buf->setParent(devReply);
         }
         reply->deleteLater();
     });
