@@ -96,7 +96,23 @@ set PATH=C:\Qt\5.15.2\mingw81_64\bin;C:\Qt\Tools\mingw810_64\bin;%PATH%
 set PATH=C:\Qt\5.15.2\msvc2019_64\bin;%PATH%
 ```
 
-#### 3. بناء المشروع من سطر الأوامر
+#### 3. بناء المشروع باستخدام CMake (موصى به)
+```batch
+:: إنشاء مجلد البناء
+mkdir build
+cd build
+
+:: إنشاء ملفات البناء باستخدام CMake
+:: MinGW:
+cmake -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH=C:\Qt\5.15.2\mingw81_64 ..
+mingw32-make
+
+:: MSVC:
+cmake -G "NMake Makefiles" -DCMAKE_PREFIX_PATH=C:\Qt\5.15.2\msvc2019_64 ..
+nmake
+```
+
+#### 4. بناء المشروع باستخدام qmake (بديل)
 ```batch
 :: إنشاء مجلد البناء
 mkdir build
@@ -113,7 +129,7 @@ mingw32-make
 nmake
 ```
 
-#### 4. بناء المشروع باستخدام VS Code Tasks
+#### 5. بناء المشروع باستخدام VS Code Tasks
 أنشئ ملف `.vscode/tasks.json`:
 ```json
 {
@@ -145,7 +161,7 @@ nmake
 }
 ```
 
-#### 5. تشغيل المشروع
+#### 6. تشغيل المشروع
 ```batch
 cd build
 :: Windows:
@@ -235,7 +251,8 @@ service cloud.firestore {
 
 ```
 SmartPOS/
-├── SmartPOS.pro              # ملف المشروع
+├── CMakeLists.txt            # ملف CMake
+├── SmartPOS.pro              # ملف qmake
 ├── README.md                 # هذا الملف
 ├── resources/
 │   ├── resources.qrc         # ملف الموارد
