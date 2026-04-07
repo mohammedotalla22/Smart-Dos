@@ -286,7 +286,6 @@ void ReportsWidget::onPrintReport()
     QString gdiName = settings.value("printer/gdiName").toString();
     if (!gdiName.isEmpty()) printer.setPrinterName(gdiName);
 
-    int reportIdx = m_reportType->currentIndex();
     QString reportTitle = m_reportType->currentText();
 
     // Collect table data

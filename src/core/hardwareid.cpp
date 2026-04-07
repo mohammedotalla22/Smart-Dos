@@ -17,7 +17,7 @@ QString HardwareId::getCpuId()
     process.start("wmic", QStringList() << "cpu" << "get" << "ProcessorId");
     process.waitForFinished(3000);
     QString output = process.readAllStandardOutput();
-    QStringList lines = output.split("\n", QString::SkipEmptyParts);
+    QStringList lines = output.split("\n", Qt::SkipEmptyParts);
     if (lines.size() >= 2) {
         return lines[1].trimmed();
     }
@@ -61,7 +61,7 @@ QString HardwareId::getDiskSerial()
     process.start("wmic", QStringList() << "diskdrive" << "get" << "SerialNumber");
     process.waitForFinished(3000);
     QString output = process.readAllStandardOutput();
-    QStringList lines = output.split("\n", QString::SkipEmptyParts);
+    QStringList lines = output.split("\n", Qt::SkipEmptyParts);
     if (lines.size() >= 2) {
         return lines[1].trimmed();
     }

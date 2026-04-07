@@ -4,6 +4,8 @@
 #include <QFont>
 #include <QDateTime>
 #include <QApplication>
+#include <QPageSize>
+#include <QPageLayout>
 
 GdiPrinter::GdiPrinter(QObject *parent) : QObject(parent)
 {
@@ -31,8 +33,8 @@ bool GdiPrinter::printReceipt(const Sale &sale, const QString &storeName,
     QPrinter printer(QPrinter::HighResolution);
     if (!m_printerName.isEmpty())
         printer.setPrinterName(m_printerName);
-    printer.setPageSize(QPrinter::A4);
-    printer.setOrientation(QPrinter::Portrait);
+    printer.setPageSize(QPageSize(QPageSize::A4));
+    printer.setPageOrientation(QPageLayout::Portrait);
 
     QPainter painter;
     if (!painter.begin(&printer)) {
@@ -41,7 +43,7 @@ bool GdiPrinter::printReceipt(const Sale &sale, const QString &storeName,
     }
 
     painter.setLayoutDirection(Qt::RightToLeft);
-    int pageWidth = printer.pageRect().width();
+    int pageWidth = printer.pageLayout().paintRectPixels(printer.resolution()).width();
     int yPos = 100;
     int lineHeight = 60;
     int margin = 100;
@@ -184,8 +186,8 @@ bool GdiPrinter::printReport(const QString &title, const QStringList &headers,
     QPrinter printer(QPrinter::HighResolution);
     if (!m_printerName.isEmpty())
         printer.setPrinterName(m_printerName);
-    printer.setPageSize(QPrinter::A4);
-    printer.setOrientation(QPrinter::Portrait);
+    printer.setPageSize(QPageSize(QPageSize::A4));
+    printer.setPageOrientation(QPageLayout::Portrait);
 
     QPainter painter;
     if (!painter.begin(&printer)) {
@@ -194,7 +196,7 @@ bool GdiPrinter::printReport(const QString &title, const QStringList &headers,
     }
 
     painter.setLayoutDirection(Qt::RightToLeft);
-    int pageWidth = printer.pageRect().width();
+    int pageWidth = printer.pageLayout().paintRectPixels(printer.resolution()).width();
     int margin = 100;
     int lineHeight = 50;
     int yPos = 100;
@@ -229,7 +231,6 @@ bool GdiPrinter::printReport(const QString &title, const QStringList &headers,
 
     // Rows
     painter.setFont(normalFont);
-    int pageNum = 1;
     for (int i = 0; i < rows.size(); ++i) {
         yPos = checkPageBreak(painter, printer, yPos, lineHeight);
         drawTableRow(painter, rows[i], colWidths, yPos);
@@ -260,6 +261,8 @@ bool GdiPrinter::printReport(const QString &title, const QStringList &headers,
 bool GdiPrinter::printSalesReport(const QString &title, const QList<QPair<QString, double>> &data,
                                    double total, const QDateTime &from, const QDateTime &to)
 {
+    Q_UNUSED(from)
+    Q_UNUSED(to)
     QStringList headers;
     headers << QString::fromUtf8("\xd8\xa7\xd9\x84\xd8\xa8\xd9\x86\xd8\xaf")
             << QString::fromUtf8("\xd8\xa7\xd9\x84\xd9\x82\xd9\x8a\xd9\x85\xd8\xa9");
@@ -280,7 +283,7 @@ bool GdiPrinter::printCustomReport(const QString &htmlContent)
     QPrinter printer(QPrinter::HighResolution);
     if (!m_printerName.isEmpty())
         printer.setPrinterName(m_printerName);
-    printer.setPageSize(QPrinter::A4);
+    printer.setPageSize(QPageSize(QPageSize::A4));
 
     QTextDocument doc;
     doc.setDefaultStyleSheet("body { direction: rtl; font-family: Arial; }");
@@ -345,7 +348,7 @@ void GdiPrinter::drawFooter(QPainter &painter, QPrinter &printer, int pageNumber
 
 int GdiPrinter::checkPageBreak(QPainter &painter, QPrinter &printer, int yPos, int needed)
 {
-    int pageHeight = printer.pageRect().height();
+    int pageHeight = printer.pageLayout().paintRectPixels(printer.resolution()).height();
     if (yPos + needed > pageHeight - 100) {
         drawFooter(painter, printer, 0);
         printer.newPage();
