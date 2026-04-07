@@ -2,6 +2,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QKeyEvent>
+#include <QCloseEvent>
 #include <QFile>
 #include <QApplication>
 #include <QMessageBox>
@@ -119,7 +120,7 @@ void MainWindow::loadSettings()
 
 void MainWindow::saveSettings()
 {
-    m_settings->value("appearance/theme", m_currentTheme);
+    m_settings->setValue("appearance/theme", m_currentTheme);
 }
 
 void MainWindow::checkActivation()
